@@ -1,7 +1,7 @@
 import { createElement } from '../render';
 
 
-const createPointAddTemplate = () => `<form class="event event--edit" action="#" method="post">
+const createEventAddTemplate = () => `<form class="event event--edit" action="#" method="post">
 <header class="event__header">
   <div class="event__type-wrapper">
     <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -165,7 +165,7 @@ const createPointAddTemplate = () => `<form class="event event--edit" action="#"
 
 export default class PointAddView {
   getTemplate() {
-    return createPointAddTemplate();
+    return createEventAddTemplate();
   }
 
   getElement() {
