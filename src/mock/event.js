@@ -1,9 +1,11 @@
 import { Event, Offer } from './const.js';
-import { getRandomInt, getRandomElementFromIt, getNRandomElementsFromIt } from '../random.js';
+import { getRandomInt, getRandomElementFromIt, getNRandomElementsFromIt } from '../utils/random.js';
 import dayjs from 'dayjs';
 
 
-const generateDate = (offset) => dayjs().add(offset, 'day').toISOString();
+const generateDate = (offset) =>
+  dayjs().add(offset, 'day').add(offset, 'hour')
+    .add(offset, 'minute').toISOString();
 
 
 const generateOffers = (event) => {
@@ -21,9 +23,9 @@ const generateOffers = (event) => {
 
 
 const generateEvent = () => ({
-  basePrice: getRandomInt(0, 500),
-  dateFrom: generateDate(getRandomInt(-5, 5)),
-  dateTo: generateDate(getRandomInt(-3, 8)),
+  basePrice: getRandomInt(Event.MIN_PRICE, Event.MAX_PRICE),
+  dateFrom: generateDate(getRandomInt(Event.DATE_FROM.MIN, Event.DATE_FROM.MAX)),
+  dateTo: generateDate(getRandomInt(Event.DATE_TO.MIN, Event.DATE_TO.MAX)),
   type: getRandomElementFromIt(Event.EVENT_TYPES),
 });
 

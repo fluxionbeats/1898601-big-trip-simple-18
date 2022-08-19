@@ -1,4 +1,4 @@
-import { getRandomElementFromIt, getRandomInt } from '../random.js';
+import { getRandomElementFromIt, getRandomInt } from '../utils/random.js';
 import { Mock, Destination, Event } from './const.js';
 
 

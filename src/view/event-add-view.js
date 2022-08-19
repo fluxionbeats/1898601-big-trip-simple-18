@@ -1,4 +1,4 @@
-import { createElement } from '../render';
+import { createElement } from '../utils/render.js';
 
 
 const createEventAddTemplate = () => `<li class="trip-events__item">

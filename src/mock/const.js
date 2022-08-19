@@ -11,6 +11,16 @@ const Event = {
   EVENT_TYPES: ['taxi', 'bus', 'train', 'ship',
     'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'],
   EVENT_COUNT: 10,
+  MAX_PRICE: 500,
+  MIN_PRICE: 1,
+  DATE_FROM:{
+    MIN: -5,
+    MAX: 5,
+  },
+  DATE_TO:{
+    MIN: -3,
+    MAX: 8,
+  }
 };
 
 const Offer = {
