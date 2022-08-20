@@ -7,8 +7,13 @@ import OffersModel from './model/offers-model.js';
 
 const filtersContainerElement = document.querySelector('.trip-controls__filters');
 const eventsContainerElement = document.querySelector('.trip-events');
-const eventsPresenter = new EventsPresenter(eventsContainerElement);
+const eventsPresenter = new EventsPresenter(
+  eventsContainerElement,
+  new EventsModel(),
+  new OffersModel(),
+  new DestinationsModel()
+);
 
 render(new FilterView(), filtersContainerElement);
 
-eventsPresenter.init(new EventsModel(), new OffersModel(), new DestinationsModel());
+eventsPresenter.init();

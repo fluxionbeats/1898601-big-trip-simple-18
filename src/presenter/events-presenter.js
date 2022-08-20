@@ -29,25 +29,30 @@ const renderEvents = (events, offers, destinations, listComponent) => {
       const eventOffers = getEventOffers(event, typeOffers);
       eventView = new EventView(event, eventOffers, eventDestination);
     }
-    render(eventView, listComponent.getElement());
+    render(eventView, listComponent.element);
   }
 };
 
 
 export default class EventsPresenter {
-  constructor(eventsContainer) {
-    this.eventsListComponent = new EventsListView();
-    this.eventsContainer = eventsContainer;
+  #eventsModel;
+  #offersModel;
+  #destinationsModel;
+  #eventsListComponent;
+  #eventsContainer;
+
+  constructor(eventsContainer, eventsModel, offersModel, destionationsModel) {
+    this.#eventsModel = eventsModel;
+    this.#offersModel = offersModel;
+    this.#destinationsModel = destionationsModel;
+    this.#eventsListComponent = new EventsListView();
+    this.#eventsContainer = eventsContainer;
   }
 
-  init(eventsModel, offersModel, destionationsModel) {
-    this.eventsModel = eventsModel;
-    this.offersModel = offersModel;
-    this.destionationsModel = destionationsModel;
-
-    render(new SortView(), this.eventsContainer);
-    render(this.eventsListComponent, this.eventsContainer);
-    renderEvents(this.eventsModel.events, this.offersModel.offers,
-      this.destionationsModel.destinations, this.eventsListComponent);
+  init() {
+    render(new SortView(), this.#eventsContainer);
+    render(this.#eventsListComponent, this.#eventsContainer);
+    renderEvents(this.#eventsModel.events, this.#offersModel.offers,
+      this.#destinationsModel.destinations, this.#eventsListComponent);
   }
 }
