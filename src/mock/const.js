@@ -13,11 +13,11 @@ const Event = {
   EVENT_COUNT: 10,
   MAX_PRICE: 500,
   MIN_PRICE: 1,
-  DATE_FROM:{
+  DATE_FROM: {
     MIN: -5,
     MAX: 5,
   },
-  DATE_TO:{
+  DATE_TO: {
     MIN: -3,
     MAX: 8,
   }
@@ -72,15 +72,48 @@ const Offer = {
     },
     {
       'type': 'bus',
-      'offers': [],
+      'offers': [
+        {
+          'id': 1,
+          'title': 'Round trip ticket',
+          'price': 20,
+        },
+      ],
     },
     {
       'type': 'train',
-      'offers': [],
+      'offers': [
+        {
+          'id': 1,
+          'title': 'Upgrade to a first class',
+          'price': 60,
+        },
+        {
+          'id': 2,
+          'title': 'Road trip ticket',
+          'price': 40,
+        },
+        {
+          'id': 3,
+          'title': 'Include a meal',
+          'price': 80,
+        },
+        {
+          'id': 4,
+          'title': 'Oversized luggage',
+          'price': 30,
+        },
+      ],
     },
     {
       'type': 'ship',
-      'offers': [],
+      'offers': [
+        {
+          'id': 1,
+          'title': 'Upgrade to a first class',
+          'price': 410,
+        },
+      ],
     },
     {
       'type': 'drive',
@@ -106,16 +139,16 @@ const Offer = {
 const Destination = {
   NAMES: ['Beijing', 'London', 'Mexico', 'Moscow', 'Nairobi', 'New Delhi', 'Paris'],
   DESCRIPTIONS:
-  [
-    'Beijing, the capital of China, is a city where the ancient culture and the modern civilization are well integrated.',
-    'London is the capital city of the United Kingdom.',
-    'Mexico is among the 15 largest economies in the world and the second largest economy in Latin America.',
-    `Moscow is situated on the Moskva River in the Central Federal District
+    [
+      'Beijing, the capital of China, is a city where the ancient culture and the modern civilization are well integrated.',
+      'London is the capital city of the United Kingdom.',
+      'Mexico is among the 15 largest economies in the world and the second largest economy in Latin America.',
+      `Moscow is situated on the Moskva River in the Central Federal District
     of European Russia making it the world's most populated inland city.`,
-    'Nairobi is situated at in South-Central Kenya, 140 Kilometers ( 87 miles) south of the Equator.',
-    'New Delhi, national capital of India.',
-    'Paris is one of the most beautiful cities in the world.',
-  ],
+      'Nairobi is situated at in South-Central Kenya, 140 Kilometers ( 87 miles) south of the Equator.',
+      'New Delhi, national capital of India.',
+      'Paris is one of the most beautiful cities in the world.',
+    ],
 };
 
 export { Mock, Event, Offer, Destination };

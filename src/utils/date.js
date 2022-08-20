@@ -13,4 +13,10 @@ const formatToShortISO = (date) => dayjs(date).format('YYYY-MM-DDTHH:mm');
 const formatToTime = (date) => dayjs(date).format('HH:mm');
 
 
-export {formatToDashedDate, formatToShortDate, formatToShortISO, formatToTime};
+const formatToSlashedDate = (date) => dayjs(date).format('DD/MM/YY');
+
+
+export {
+  formatToDashedDate, formatToShortDate, formatToShortISO
+  , formatToTime, formatToSlashedDate
+};

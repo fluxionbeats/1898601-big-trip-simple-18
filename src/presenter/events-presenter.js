@@ -2,12 +2,13 @@ import { render } from '../utils/render.js';
 import SortView from '../view/sort-view.js';
 import EventsListView from '../view/events-list-view.js';
 import EventView from '../view/event-view.js';
+import EventEditView from '../view/event-edit-view.js';
 
 
-const getEventOffers = (event, offers) => {
-  const typeOffers = offers.find((offer) => offer.type === event.type).offers;
-  return typeOffers.filter((offer) => event.offers.includes(offer.id));
-};
+const getTypeOffers = (event, offers) => offers.find((offer) => offer.type === event.type).offers;
+
+
+const getEventOffers = (event, offers) => offers.filter((offer) => event.offers.includes(offer.id));
 
 
 const getEventDestination = (event, destinations) =>
@@ -15,10 +16,20 @@ const getEventDestination = (event, destinations) =>
 
 
 const renderEvents = (events, offers, destinations, listComponent) => {
+  let first = true;
   for (const event of events) {
-    const eventOffers = getEventOffers(event, offers);
+    const typeOffers = getTypeOffers(event, offers);
     const eventDestination = getEventDestination(event, destinations);
-    render(new EventView(event, eventOffers, eventDestination), listComponent.getElement());
+    let eventView;
+    if (first) {
+      eventView = new EventEditView(event, typeOffers, eventDestination);
+      first = false;
+    }
+    else {
+      const eventOffers = getEventOffers(event, typeOffers);
+      eventView = new EventView(event, eventOffers, eventDestination);
+    }
+    render(eventView, listComponent.getElement());
   }
 };
 
