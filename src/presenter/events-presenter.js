@@ -1,4 +1,5 @@
 import { render } from '../utils/render.js';
+import { isEscapeKey, replaceComponent } from '../utils/util.js';
 import SortView from '../view/sort-view.js';
 import EventsListView from '../view/events-list-view.js';
 import EventView from '../view/event-view.js';
@@ -13,25 +14,6 @@ const getEventOffers = (event, offers) => offers.filter((offer) => event.offers.
 
 const getEventDestination = (event, destinations) =>
   destinations.find((destination) => event.destination === destination.id);
-
-
-const renderEvents = (events, offers, destinations, listComponent) => {
-  let first = true;
-  for (const event of events) {
-    const typeOffers = getTypeOffers(event, offers);
-    const eventDestination = getEventDestination(event, destinations);
-    let eventView;
-    if (first) {
-      eventView = new EventEditView(event, typeOffers, eventDestination);
-      first = false;
-    }
-    else {
-      const eventOffers = getEventOffers(event, typeOffers);
-      eventView = new EventView(event, eventOffers, eventDestination);
-    }
-    render(eventView, listComponent.element);
-  }
-};
 
 
 export default class EventsPresenter {
@@ -52,7 +34,53 @@ export default class EventsPresenter {
   init() {
     render(new SortView(), this.#eventsContainer);
     render(this.#eventsListComponent, this.#eventsContainer);
-    renderEvents(this.#eventsModel.events, this.#offersModel.offers,
+    this.#renderEvents(this.#eventsModel.events, this.#offersModel.offers,
       this.#destinationsModel.destinations, this.#eventsListComponent);
+  }
+
+  #renderEvents(events, offers, destinations, listComponent) {
+    for (const event of events) {
+      const typeOffers = getTypeOffers(event, offers);
+      const eventOffers = getEventOffers(event, typeOffers);
+      const eventDestination = getEventDestination(event, destinations);
+      const eventComponent = new EventView(event, eventOffers, eventDestination);
+      const eventRollupElement = eventComponent.element.querySelector('.event__rollup-btn');
+      let eventEditComponent;
+
+
+      const onEscKeyDown = (evt) => {
+        if (isEscapeKey(evt)) {
+          evt.preventDefault();
+          replaceComponent(eventEditComponent, eventComponent);
+          eventEditComponent.removeElement();
+          document.removeEventListener('keydown', onEscKeyDown);
+        }
+      };
+
+
+      render(eventComponent, listComponent.element);
+
+      eventRollupElement.addEventListener('click', () => {
+        eventEditComponent = new EventEditView(event, typeOffers, eventDestination);
+        const eventEditRollupElement = eventEditComponent.element.querySelector('.event__rollup-btn');
+        const eventEditFormElement = eventEditComponent.element.querySelector('.event--edit');
+
+        replaceComponent(eventComponent, eventEditComponent);
+        document.addEventListener('keydown', onEscKeyDown);
+
+        eventEditRollupElement.addEventListener('click', () => {
+          replaceComponent(eventEditComponent, eventComponent);
+          eventEditComponent.removeElement();
+          document.removeEventListener('keydown', onEscKeyDown);
+        });
+
+        eventEditFormElement.addEventListener('submit', (evt) => {
+          evt.preventDefault();
+          replaceComponent(eventEditComponent, eventComponent);
+          eventEditComponent.removeElement();
+          document.removeEventListener('keydown', onEscKeyDown);
+        });
+      });
+    }
   }
 }
