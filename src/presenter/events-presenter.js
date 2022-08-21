@@ -4,6 +4,7 @@ import SortView from '../view/sort-view.js';
 import EventsListView from '../view/events-list-view.js';
 import EventView from '../view/event-view.js';
 import EventEditView from '../view/event-edit-view.js';
+import NoEventsView from '../view/no-events-view.js';
 
 
 const getTypeOffers = (event, offers) => offers.find((offer) => offer.type === event.type).offers;
@@ -31,11 +32,17 @@ export default class EventsPresenter {
     this.#eventsContainer = eventsContainer;
   }
 
+
   init() {
-    render(new SortView(), this.#eventsContainer);
-    render(this.#eventsListComponent, this.#eventsContainer);
-    this.#renderEvents(this.#eventsModel.events, this.#offersModel.offers,
-      this.#destinationsModel.destinations, this.#eventsListComponent);
+    if (this.#eventsModel.events.length) {
+      render(new SortView(), this.#eventsContainer);
+      render(this.#eventsListComponent, this.#eventsContainer);
+      this.#renderEvents(this.#eventsModel.events, this.#offersModel.offers,
+        this.#destinationsModel.destinations, this.#eventsListComponent);
+    }
+    else{
+      render(new NoEventsView(), this.#eventsContainer);
+    }
   }
 
   #renderEvents(events, offers, destinations, listComponent) {
