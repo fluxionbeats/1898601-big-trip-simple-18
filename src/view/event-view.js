@@ -6,28 +6,21 @@ import {
 import { capitalizeFirstLetter } from '../utils/util.js';
 
 
-const createOffersTemplate = (offers) => {
-  let offersTemplate =
-    `<ul class="event__selected-offers">
-    <li class="event__offer">
-      <span class="event__offer-title">No additional offers</span>
-    </li>
-  </ul>`;
-  if (offers.length) {
-    offersTemplate =
-      `<ul class="event__selected-offers">
-      ${offers.map((offer) => `<li class="event__offer">
-      <span class="event__offer-title">
-        ${offer.title}
-      </span>&plus;&euro;&nbsp;
-      <span class="event__offer-price">
-        ${offer.price}
-      </span>
-    </li>`).join('')}
-    </ul>`;
-  }
-  return offersTemplate;
-};
+const createOfferTemplate = (offer) =>
+  `<li class="event__offer">
+    <span class="event__offer-title">${offer.title}</span>
+    &plus;&euro;&nbsp;
+    <span class="event__offer-price">${offer.price}</span>
+  </li>`;
+
+
+const createOffersTemplate = (offers) => (
+  offers.length
+    ? `${offers.map((offer) => createOfferTemplate(offer)).join('')}`
+    : `<li class="event__offer">
+        <span class="event__offer-title">No additional offers</span>
+      </li>`
+);
 
 
 const createEventTemplate = (event, offers, destination) => {
@@ -52,7 +45,9 @@ const createEventTemplate = (event, offers, destination) => {
       &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
     </p>
     <h4 class="visually-hidden">Offers:</h4>
-    ${createOffersTemplate(offers)}
+    <ul class="event__selected-offers">
+      ${createOffersTemplate(offers)}
+    </ul>
     <button class="event__rollup-btn" type="button">
       <span class="visually-hidden">Open event</span>
     </button>
@@ -62,24 +57,29 @@ const createEventTemplate = (event, offers, destination) => {
 
 
 export default class EventView {
+  #event;
+  #offers;
+  #destination;
+  #element;
+
   constructor(event, offers, destination) {
-    this.event = event;
-    this.offers = offers;
-    this.destination = destination;
+    this.#event = event;
+    this.#offers = offers;
+    this.#destination = destination;
   }
 
-  getTemplate() {
-    return createEventTemplate(this.event, this.offers, this.destination);
+  get template() {
+    return createEventTemplate(this.#event, this.#offers, this.#destination);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
