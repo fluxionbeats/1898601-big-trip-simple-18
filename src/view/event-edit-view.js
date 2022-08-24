@@ -1,6 +1,6 @@
 import { formatToSlashedDate, formatToTime } from '../utils/date.js';
-import { createElement } from '../utils/render.js';
 import { capitalizeFirstLetter } from '../utils/util.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 
 const createOfferTemplate = (event, offer) => {
@@ -147,13 +147,13 @@ const createEventEditTemplate = (event, offers, destination) => {
 };
 
 
-export default class EventEditView {
-  #event;
-  #offers;
-  #destination;
-  #element;
+export default class EventEditView extends AbstractView{
+  #event = null;
+  #offers = null;
+  #destination = null;
 
   constructor(event, offers, destination) {
+    super();
     this.#event = event || {};
     this.#offers = offers || {};
     this.#destination = destination || {};
@@ -161,16 +161,5 @@ export default class EventEditView {
 
   get template() {
     return createEventEditTemplate(this.#event, this.#offers, this.#destination);
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

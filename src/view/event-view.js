@@ -1,9 +1,9 @@
-import { createElement } from '../utils/render.js';
 import {
   formatToDashedDate, formatToShortDate,
   formatToShortISO, formatToTime
 } from '../utils/date.js';
 import { capitalizeFirstLetter } from '../utils/util.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 
 const createOfferTemplate = (offer) =>
@@ -56,13 +56,13 @@ const createEventTemplate = (event, offers, destination) => {
 };
 
 
-export default class EventView {
-  #event;
-  #offers;
-  #destination;
-  #element;
+export default class EventView extends AbstractView{
+  #event = null;
+  #offers = null;
+  #destination = null;
 
   constructor(event, offers, destination) {
+    super();
     this.#event = event;
     this.#offers = offers;
     this.#destination = destination;
@@ -70,16 +70,5 @@ export default class EventView {
 
   get template() {
     return createEventTemplate(this.#event, this.#offers, this.#destination);
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
