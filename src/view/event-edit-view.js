@@ -1,6 +1,6 @@
 import { formatToSlashedDate, formatToTime } from '../utils/date.js';
-import { createElement } from '../utils/render.js';
 import { capitalizeFirstLetter } from '../utils/util.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 
 const createOfferTemplate = (event, offer) => {
@@ -147,13 +147,13 @@ const createEventEditTemplate = (event, offers, destination) => {
 };
 
 
-export default class EventEditView {
-  #event;
-  #offers;
-  #destination;
-  #element;
+export default class EventEditView extends AbstractView {
+  #event = null;
+  #offers = null;
+  #destination = null;
 
   constructor(event, offers, destination) {
+    super();
     this.#event = event || {};
     this.#offers = offers || {};
     this.#destination = destination || {};
@@ -163,14 +163,23 @@ export default class EventEditView {
     return createEventEditTemplate(this.#event, this.#offers, this.#destination);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-    return this.#element;
-  }
+  setFormSubmitHandler = (cb) => {
+    this._callback.formSubmit = cb;
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
+  };
 
-  removeElement() {
-    this.#element = null;
-  }
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.formSubmit();
+  };
+
+  setFormCloseHandler = (cb) => {
+    this._callback.formClose = cb;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#formCloseHandler);
+  };
+
+  #formCloseHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.formClose();
+  };
 }
