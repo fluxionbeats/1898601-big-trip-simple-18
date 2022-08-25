@@ -1,4 +1,4 @@
-import { render } from '../utils/render.js';
+import { render } from '../framework/render.js';
 import { isEscapeKey, replaceComponent } from '../utils/util.js';
 import SortView from '../view/sort-view.js';
 import EventsListView from '../view/events-list-view.js';
@@ -40,7 +40,7 @@ export default class EventsPresenter {
       this.#renderEvents(this.#eventsModel.events, this.#offersModel.offers,
         this.#destinationsModel.destinations, this.#eventsListComponent);
     }
-    else{
+    else {
       render(new NoEventsView(), this.#eventsContainer);
     }
   }
@@ -51,7 +51,6 @@ export default class EventsPresenter {
       const eventOffers = getEventOffers(event, typeOffers);
       const eventDestination = getEventDestination(event, destinations);
       const eventComponent = new EventView(event, eventOffers, eventDestination);
-      const eventRollupElement = eventComponent.element.querySelector('.event__rollup-btn');
       let eventEditComponent;
 
 
@@ -67,26 +66,23 @@ export default class EventsPresenter {
 
       render(eventComponent, listComponent.element);
 
-      eventRollupElement.addEventListener('click', () => {
+      eventComponent.setEditClickHandler(() => {
         eventEditComponent = new EventEditView(event, typeOffers, eventDestination);
-        const eventEditRollupElement = eventEditComponent.element.querySelector('.event__rollup-btn');
-        const eventEditFormElement = eventEditComponent.element.querySelector('.event--edit');
-
         replaceComponent(eventComponent, eventEditComponent);
+
+        eventEditComponent.setFormSubmitHandler(() => {
+          replaceComponent(eventEditComponent, eventComponent);
+          eventEditComponent.removeElement();
+          document.removeEventListener('keydown', onEscKeyDown);
+        });
+
+        eventEditComponent.setFormCloseHandler(() => {
+          replaceComponent(eventEditComponent, eventComponent);
+          eventEditComponent.removeElement();
+          document.removeEventListener('keydown', onEscKeyDown);
+        });
+
         document.addEventListener('keydown', onEscKeyDown);
-
-        eventEditRollupElement.addEventListener('click', () => {
-          replaceComponent(eventEditComponent, eventComponent);
-          eventEditComponent.removeElement();
-          document.removeEventListener('keydown', onEscKeyDown);
-        });
-
-        eventEditFormElement.addEventListener('submit', (evt) => {
-          evt.preventDefault();
-          replaceComponent(eventEditComponent, eventComponent);
-          eventEditComponent.removeElement();
-          document.removeEventListener('keydown', onEscKeyDown);
-        });
       });
     }
   }

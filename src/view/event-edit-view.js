@@ -147,7 +147,7 @@ const createEventEditTemplate = (event, offers, destination) => {
 };
 
 
-export default class EventEditView extends AbstractView{
+export default class EventEditView extends AbstractView {
   #event = null;
   #offers = null;
   #destination = null;
@@ -162,4 +162,24 @@ export default class EventEditView extends AbstractView{
   get template() {
     return createEventEditTemplate(this.#event, this.#offers, this.#destination);
   }
+
+  setFormSubmitHandler = (cb) => {
+    this._callback.formSubmit = cb;
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
+  };
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.formSubmit();
+  };
+
+  setFormCloseHandler = (cb) => {
+    this._callback.formClose = cb;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#formCloseHandler);
+  };
+
+  #formCloseHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.formClose();
+  };
 }
