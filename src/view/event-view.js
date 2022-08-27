@@ -56,7 +56,7 @@ const createEventTemplate = (event, offers, destination) => {
 };
 
 
-export default class EventView extends AbstractView{
+export default class EventView extends AbstractView {
   #event = null;
   #offers = null;
   #destination = null;
