@@ -15,7 +15,7 @@ const Event = {
   MIN_PRICE: 1,
   DATE_FROM: {
     MIN: -5,
-    MAX: 5,
+    MAX: 1,
   },
   DATE_TO: {
     MIN: -3,
@@ -151,4 +151,9 @@ const Destination = {
     ],
 };
 
-export { Mock, Event, Offer, Destination };
+const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+};
+
+export { Mock, Event, Offer, Destination, FilterType };
