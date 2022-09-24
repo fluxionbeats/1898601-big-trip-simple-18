@@ -1,5 +1,5 @@
-import { render } from '../framework/render.js';
-import { isEscapeKey, replaceComponent } from '../utils/util.js';
+import { render, RenderPosition, replace } from '../framework/render.js';
+import { isEscapeKey } from '../utils/util.js';
 import SortView from '../view/sort-view.js';
 import EventsListView from '../view/events-list-view.js';
 import EventView from '../view/event-view.js';
@@ -18,72 +18,85 @@ const getEventDestination = (event, destinations) =>
 
 
 export default class EventsPresenter {
-  #eventsModel;
-  #offersModel;
-  #destinationsModel;
-  #eventsListComponent;
-  #eventsContainer;
+  #eventsContainer = null;
+  #eventsModel = null;
+  #offersModel = null;
+  #destinationsModel = null;
+
+  #eventsListComponent = new EventsListView();
+  #sortComponent = new SortView();
+  #noEventsComponent = new NoEventsView();
 
   constructor(eventsContainer, eventsModel, offersModel, destionationsModel) {
     this.#eventsModel = eventsModel;
     this.#offersModel = offersModel;
     this.#destinationsModel = destionationsModel;
-    this.#eventsListComponent = new EventsListView();
     this.#eventsContainer = eventsContainer;
   }
 
-
   init() {
     if (this.#eventsModel.events.length) {
-      render(new SortView(), this.#eventsContainer);
-      render(this.#eventsListComponent, this.#eventsContainer);
-      this.#renderEvents(this.#eventsModel.events, this.#offersModel.offers,
-        this.#destinationsModel.destinations, this.#eventsListComponent);
+      this.#renderSort();
+      this.#renderEvents();
     }
     else {
-      render(new NoEventsView(), this.#eventsContainer);
+      this.#renderNoEvents();
     }
   }
 
-  #renderEvents(events, offers, destinations, listComponent) {
-    for (const event of events) {
-      const typeOffers = getTypeOffers(event, offers);
-      const eventOffers = getEventOffers(event, typeOffers);
-      const eventDestination = getEventDestination(event, destinations);
-      const eventComponent = new EventView(event, eventOffers, eventDestination);
-      let eventEditComponent;
+  #renderSort() {
+    render(this.#sortComponent, this.#eventsContainer, RenderPosition.AFTERBEGIN);
+  }
+
+  #renderNoEvents() {
+    render(this.#noEventsComponent, this.#eventsContainer);
+  }
+
+  #renderEvent(event) {
+    const typeOffers = getTypeOffers(event, this.#offersModel.offers);
+    const eventOffers = getEventOffers(event, typeOffers);
+    const eventDestination = getEventDestination(event, this.#destinationsModel.destinations);
+    const eventComponent = new EventView(event, eventOffers, eventDestination);
+    let eventEditComponent;
 
 
-      const onEscKeyDown = (evt) => {
-        if (isEscapeKey(evt)) {
-          evt.preventDefault();
-          replaceComponent(eventEditComponent, eventComponent);
-          eventEditComponent.removeElement();
-          document.removeEventListener('keydown', onEscKeyDown);
-        }
-      };
+    const onEscKeyDown = (evt) => {
+      if (isEscapeKey(evt)) {
+        evt.preventDefault();
+        replace(eventEditComponent, eventComponent);
+        eventEditComponent.removeElement();
+        document.removeEventListener('keydown', onEscKeyDown);
+      }
+    };
 
 
-      render(eventComponent, listComponent.element);
+    render(eventComponent, this.#eventsListComponent.element);
 
-      eventComponent.setEditClickHandler(() => {
-        eventEditComponent = new EventEditView(event, typeOffers, eventDestination);
-        replaceComponent(eventComponent, eventEditComponent);
+    eventComponent.setEditClickHandler(() => {
+      eventEditComponent = new EventEditView(event, typeOffers, eventDestination);
+      replace(eventEditComponent, eventComponent);
 
-        eventEditComponent.setFormSubmitHandler(() => {
-          replaceComponent(eventEditComponent, eventComponent);
-          eventEditComponent.removeElement();
-          document.removeEventListener('keydown', onEscKeyDown);
-        });
-
-        eventEditComponent.setFormCloseHandler(() => {
-          replaceComponent(eventEditComponent, eventComponent);
-          eventEditComponent.removeElement();
-          document.removeEventListener('keydown', onEscKeyDown);
-        });
-
-        document.addEventListener('keydown', onEscKeyDown);
+      eventEditComponent.setFormSubmitHandler(() => {
+        replace(eventEditComponent, eventComponent);
+        eventEditComponent.removeElement();
+        document.removeEventListener('keydown', onEscKeyDown);
       });
+
+      eventEditComponent.setFormCloseHandler(() => {
+        replace(eventComponent, eventEditComponent);
+        eventEditComponent.removeElement();
+        document.removeEventListener('keydown', onEscKeyDown);
+      });
+
+      document.addEventListener('keydown', onEscKeyDown);
+    });
+  }
+
+  #renderEvents() {
+    render(this.#eventsListComponent, this.#eventsContainer);
+
+    for (const event of this.#eventsModel.events) {
+      this.#renderEvent(event);
     }
   }
 }
