@@ -17,8 +17,8 @@ const getEventDestination = (event, destinations) =>
   destinations.find((destination) => event.destination === destination.id);
 
 
-export default class EventsPresenter {
-  #eventsContainer = null;
+export default class BoardPresenter {
+  #boardContainer = null;
   #eventsModel = null;
   #offersModel = null;
   #destinationsModel = null;
@@ -27,11 +27,11 @@ export default class EventsPresenter {
   #sortComponent = new SortView();
   #noEventsComponent = new NoEventsView();
 
-  constructor(eventsContainer, eventsModel, offersModel, destionationsModel) {
+  constructor(boardContainer, eventsModel, offersModel, destionationsModel) {
+    this.#boardContainer = boardContainer;
     this.#eventsModel = eventsModel;
     this.#offersModel = offersModel;
     this.#destinationsModel = destionationsModel;
-    this.#eventsContainer = eventsContainer;
   }
 
   init() {
@@ -45,11 +45,11 @@ export default class EventsPresenter {
   }
 
   #renderSort() {
-    render(this.#sortComponent, this.#eventsContainer, RenderPosition.AFTERBEGIN);
+    render(this.#sortComponent, this.#boardContainer, RenderPosition.AFTERBEGIN);
   }
 
   #renderNoEvents() {
-    render(this.#noEventsComponent, this.#eventsContainer);
+    render(this.#noEventsComponent, this.#boardContainer);
   }
 
   #renderEvent(event) {
@@ -93,7 +93,7 @@ export default class EventsPresenter {
   }
 
   #renderEvents() {
-    render(this.#eventsListComponent, this.#eventsContainer);
+    render(this.#eventsListComponent, this.#boardContainer);
 
     for (const event of this.#eventsModel.events) {
       this.#renderEvent(event);
