@@ -11,7 +11,7 @@ const getEventOffers = (event, allOffers) => allOffers.filter((offer) => event.o
 
 
 const getDestination = (event, destinations) =>
-  destinations.find((destination) => event.destination === destination.id);
+  destinations.find((destination) => destination.id === event.destination);
 
 
 export default class EventPresenter {
@@ -40,13 +40,13 @@ export default class EventPresenter {
     this.#eventComponent = new EventView(this.#event, this.#eventOffers, this.#destination);
     this.#eventComponent.setEditClickHandler(this.#replaceCardToForm);
 
-    if(prevEventComponent === null){
+    if (prevEventComponent === null) {
       render(this.#eventComponent, this.#eventsListContainer.element);
     }
-    else if(this.#eventsListContainer.contains(prevEventComponent.element)){
+    else if (this.#eventsListContainer.contains(prevEventComponent.element)) {
       replace(this.#eventComponent, prevEventComponent);
     }
-    else if(this.#eventsListContainer.contains(prevEventEditComponent.element)){
+    else if (this.#eventsListContainer.contains(prevEventEditComponent.element)) {
       replace(this.#eventEditComponent, prevEventEditComponent);
     }
 
@@ -54,13 +54,9 @@ export default class EventPresenter {
     remove(prevEventEditComponent);
   }
 
-  destroy(){
+  destroy() {
     remove(this.#eventComponent);
     remove(this.#eventEditComponent);
-    this.#event = null;
-    this.#allOffers = null;
-    this.#eventOffers = null;
-    this.#destination = null;
   }
 
   #escKeyDownHandler = (evt) => {

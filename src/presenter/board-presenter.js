@@ -15,6 +15,8 @@ export default class BoardPresenter {
   #sortComponent = new SortView();
   #noEventsComponent = new NoEventsView();
 
+  #eventsPresenter = new Map();
+
   constructor(boardContainer, eventsModel, offersModel, destionationsModel) {
     this.#boardContainer = boardContainer;
     this.#events = eventsModel.events;
@@ -43,6 +45,7 @@ export default class BoardPresenter {
   #renderEvent(event) {
     const eventPresenter = new EventPresenter(this.#eventsListComponent);
     eventPresenter.init(event, this.#offers, this.#destinations);
+    this.#eventsPresenter.set(event.id, eventPresenter);
   }
 
   #renderEvents() {
@@ -51,5 +54,10 @@ export default class BoardPresenter {
     for (const event of this.#events) {
       this.#renderEvent(event);
     }
+  }
+
+  #clearEventsList() {
+    this.#eventsPresenter.forEach((eventPresenter) => eventPresenter.destroy());
+    this.#eventsPresenter.clear();
   }
 }
