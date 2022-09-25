@@ -1,5 +1,5 @@
 import { isEscapeKey } from '../utils/util.js';
-import { render, replace } from '../framework/render.js';
+import { render, replace, remove } from '../framework/render.js';
 import EventView from '../view/event-view.js';
 import EventEditView from '../view/event-edit-view.js';
 
@@ -34,10 +34,33 @@ export default class EventPresenter {
     this.#eventOffers = getEventOffers(event, this.#allOffers);
     this.#destination = getDestination(event, destinations);
 
+    const prevEventComponent = this.#eventComponent;
+    const prevEventEditComponent = this.#eventEditComponent;
+
     this.#eventComponent = new EventView(this.#event, this.#eventOffers, this.#destination);
     this.#eventComponent.setEditClickHandler(this.#replaceCardToForm);
 
-    render(this.#eventComponent, this.#eventsListContainer.element);
+    if(prevEventComponent === null){
+      render(this.#eventComponent, this.#eventsListContainer.element);
+    }
+    else if(this.#eventsListContainer.contains(prevEventComponent.element)){
+      replace(this.#eventComponent, prevEventComponent);
+    }
+    else if(this.#eventsListContainer.contains(prevEventEditComponent.element)){
+      replace(this.#eventEditComponent, prevEventEditComponent);
+    }
+
+    remove(prevEventComponent);
+    remove(prevEventEditComponent);
+  }
+
+  destroy(){
+    remove(this.#eventComponent);
+    remove(this.#eventEditComponent);
+    this.#event = null;
+    this.#allOffers = null;
+    this.#eventOffers = null;
+    this.#destination = null;
   }
 
   #escKeyDownHandler = (evt) => {
