@@ -3,6 +3,11 @@ import { render, replace, remove } from '../framework/render.js';
 import EventView from '../view/event-view.js';
 import EventEditView from '../view/event-edit-view.js';
 
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
+
 
 const getAllOffers = (event, offers) => offers.find((offer) => offer.type === event.type).offers;
 
@@ -15,20 +20,24 @@ const getDestination = (event, destinations) =>
 
 
 export default class EventPresenter {
-  #eventsListContainer = null;
-  #changeData = null;
-
   #event = null;
   #allOffers = null;
   #eventOffers = null;
   #destination = null;
 
+  #eventsListContainer = null;
   #eventComponent = null;
   #eventEditComponent = null;
 
-  constructor(eventsListContainer, changeData) {
+  #changeData = null;
+  #changeMode = null;
+
+  #mode = Mode.DEFAULT;
+
+  constructor(eventsListContainer, changeData, changeMode) {
     this.#eventsListContainer = eventsListContainer.element;
     this.#changeData = changeData;
+    this.#changeMode = changeMode;
   }
 
   init(event, offers, destinations) {
@@ -46,10 +55,10 @@ export default class EventPresenter {
     if (prevEventComponent === null) {
       render(this.#eventComponent, this.#eventsListContainer);
     }
-    else if (this.#eventsListContainer.contains(prevEventComponent.element)) {
+    else if (this.#mode === Mode.DEFAULT) {
       replace(this.#eventComponent, prevEventComponent);
     }
-    else if (this.#eventsListContainer.contains(prevEventEditComponent.element)) {
+    else if (this.#mode === Mode.EDITING) {
       this.#eventEditComponent = new EventEditView(this.#event, this.#allOffers, this.#destination);
       replace(this.#eventEditComponent, prevEventEditComponent);
     }
@@ -63,6 +72,12 @@ export default class EventPresenter {
     remove(this.#eventEditComponent);
   }
 
+  resetView(){
+    if(this.#mode !== Mode.DEFAULT){
+      this.#replaceFormToCard();
+    }
+  }
+
   #replaceCardToForm = () => {
     this.#eventEditComponent = new EventEditView(this.#event, this.#allOffers, this.#destination);
     this.#eventEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
@@ -70,12 +85,15 @@ export default class EventPresenter {
 
     replace(this.#eventEditComponent, this.#eventComponent);
     document.addEventListener('keydown', this.#escKeyDownHandler);
+    this.#changeMode();
+    this.#mode = Mode.EDITING;
   };
 
   #replaceFormToCard = () => {
     replace(this.#eventComponent, this.#eventEditComponent);
     this.#eventEditComponent.removeElement();
     document.removeEventListener('keydown', this.#escKeyDownHandler);
+    this.#mode = Mode.DEFAULT;
   };
 
   #escKeyDownHandler = (evt) => {

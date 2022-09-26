@@ -44,7 +44,7 @@ export default class BoardPresenter {
   }
 
   #renderEvent(event) {
-    const eventPresenter = new EventPresenter(this.#eventsListComponent, this.#handleEventChange);
+    const eventPresenter = new EventPresenter(this.#eventsListComponent, this.#handleEventChange, this.#handleModeChange);
     eventPresenter.init(event, this.#offers, this.#destinations);
     this.#eventsPresenter.set(event.id, eventPresenter);
   }
@@ -65,5 +65,9 @@ export default class BoardPresenter {
   #handleEventChange = (updatedEvent) => {
     updateItemInIterable(this.#events, updatedEvent);
     this.#eventsPresenter.get(updatedEvent.id).init(updatedEvent, this.#offers, this.#destinations);
+  };
+
+  #handleModeChange = () => {
+    this.#eventsPresenter.forEach((eventPresenter) => eventPresenter.resetView());
   };
 }
