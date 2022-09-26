@@ -1,6 +1,7 @@
 import { Event, Offer } from './const.js';
 import { getRandomInt, getRandomElementFromIt, getNRandomElementsFromIt } from '../utils/random.js';
 import dayjs from 'dayjs';
+import { nanoid } from 'nanoid';
 
 
 const generateDate = (offset) =>
@@ -32,7 +33,6 @@ const generateEvent = () => ({
 
 const generateEvents = () => {
   const events = Array.from({ length: Event.EVENT_COUNT }, generateEvent);
-
   return events.map((event, index) => {
     const offers = generateOffers(event);
     const destination = index;
@@ -40,7 +40,7 @@ const generateEvents = () => {
       ...event,
       offers,
       destination,
-      id: index.toString(),
+      id: nanoid(),
     };
   });
 };

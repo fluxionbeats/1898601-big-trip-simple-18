@@ -4,11 +4,15 @@ const capitalizeFirstLetter = (string) => string[0].toUpperCase() + string.slice
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
 
-const replaceComponent = (oldComponent, newComponent) => {
-  oldComponent.element.replaceWith(newComponent.element);
+const updateItemInIterable = (iterable, updateItem) => {
+  const index = Array.from(iterable).findIndex((item) => item.id === updateItem.id);
+
+  if (index !== -1) {
+    iterable[index] = updateItem;
+  }
 };
 
 
 export {
-  capitalizeFirstLetter, isEscapeKey, replaceComponent,
+  capitalizeFirstLetter, isEscapeKey, updateItemInIterable,
 };
