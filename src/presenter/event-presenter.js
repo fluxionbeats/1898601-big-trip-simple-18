@@ -16,6 +16,8 @@ const getDestination = (event, destinations) =>
 
 export default class EventPresenter {
   #eventsListContainer = null;
+  #changeData = null;
+
   #event = null;
   #allOffers = null;
   #eventOffers = null;
@@ -24,8 +26,9 @@ export default class EventPresenter {
   #eventComponent = null;
   #eventEditComponent = null;
 
-  constructor(eventsListContainer) {
-    this.#eventsListContainer = eventsListContainer;
+  constructor(eventsListContainer, changeData) {
+    this.#eventsListContainer = eventsListContainer.element;
+    this.#changeData = changeData;
   }
 
   init(event, offers, destinations) {
@@ -38,15 +41,16 @@ export default class EventPresenter {
     const prevEventEditComponent = this.#eventEditComponent;
 
     this.#eventComponent = new EventView(this.#event, this.#eventOffers, this.#destination);
-    this.#eventComponent.setEditClickHandler(this.#replaceCardToForm);
+    this.#eventComponent.setEditClickHandler(this.#handleEditClick);
 
     if (prevEventComponent === null) {
-      render(this.#eventComponent, this.#eventsListContainer.element);
+      render(this.#eventComponent, this.#eventsListContainer);
     }
     else if (this.#eventsListContainer.contains(prevEventComponent.element)) {
       replace(this.#eventComponent, prevEventComponent);
     }
     else if (this.#eventsListContainer.contains(prevEventEditComponent.element)) {
+      this.#eventEditComponent = new EventEditView(this.#event, this.#allOffers, this.#destination);
       replace(this.#eventEditComponent, prevEventEditComponent);
     }
 
@@ -59,17 +63,10 @@ export default class EventPresenter {
     remove(this.#eventEditComponent);
   }
 
-  #escKeyDownHandler = (evt) => {
-    if (isEscapeKey(evt)) {
-      evt.preventDefault();
-      this.#replaceFormToCard();
-    }
-  };
-
   #replaceCardToForm = () => {
     this.#eventEditComponent = new EventEditView(this.#event, this.#allOffers, this.#destination);
-    this.#eventEditComponent.setFormSubmitHandler(this.#replaceFormToCard);
-    this.#eventEditComponent.setFormCloseHandler(this.#replaceFormToCard);
+    this.#eventEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
+    this.#eventEditComponent.setFormCloseHandler(this.#handleFormClose);
 
     replace(this.#eventEditComponent, this.#eventComponent);
     document.addEventListener('keydown', this.#escKeyDownHandler);
@@ -79,5 +76,25 @@ export default class EventPresenter {
     replace(this.#eventComponent, this.#eventEditComponent);
     this.#eventEditComponent.removeElement();
     document.removeEventListener('keydown', this.#escKeyDownHandler);
+  };
+
+  #escKeyDownHandler = (evt) => {
+    if (isEscapeKey(evt)) {
+      evt.preventDefault();
+      this.#replaceFormToCard();
+    }
+  };
+
+  #handleFormSubmit = (event) => {
+    this.#changeData(event);
+    this.#replaceFormToCard();
+  };
+
+  #handleEditClick = () => {
+    this.#replaceCardToForm();
+  };
+
+  #handleFormClose = () => {
+    this.#replaceFormToCard();
   };
 }

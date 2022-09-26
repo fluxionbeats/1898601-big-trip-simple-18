@@ -1,4 +1,5 @@
 import { render, RenderPosition } from '../framework/render.js';
+import { updateItemInIterable } from '../utils/util.js';
 import SortView from '../view/sort-view.js';
 import EventsListView from '../view/events-list-view.js';
 import NoEventsView from '../view/no-events-view.js';
@@ -43,7 +44,7 @@ export default class BoardPresenter {
   }
 
   #renderEvent(event) {
-    const eventPresenter = new EventPresenter(this.#eventsListComponent);
+    const eventPresenter = new EventPresenter(this.#eventsListComponent, this.#handleEventChange);
     eventPresenter.init(event, this.#offers, this.#destinations);
     this.#eventsPresenter.set(event.id, eventPresenter);
   }
@@ -60,4 +61,9 @@ export default class BoardPresenter {
     this.#eventsPresenter.forEach((eventPresenter) => eventPresenter.destroy());
     this.#eventsPresenter.clear();
   }
+
+  #handleEventChange = (updatedEvent) => {
+    updateItemInIterable(this.#events, updatedEvent);
+    this.#eventsPresenter.get(updatedEvent.id).init(updatedEvent, this.#offers, this.#destinations);
+  };
 }
